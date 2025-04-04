@@ -1,40 +1,406 @@
 <!doctype html>
 <html lang="en">
-	<head>
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-		<title>reveal.js</title>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-		<link rel="stylesheet" href="dist/reset.css">
-		<link rel="stylesheet" href="dist/reveal.css">
-		<link rel="stylesheet" href="dist/theme/black.css">
+	<title>reveal.js</title>
 
-		<!-- Theme used for syntax highlighted code -->
-		<link rel="stylesheet" href="plugin/highlight/monokai.css">
-	</head>
-	<body>
-		<div class="reveal">
-			<div class="slides">
-				<section>Slide 1</section>
-				<section>Slide 2</section>
-			</div>
+	<link rel="stylesheet" href="dist/reset.css">
+	<link rel="stylesheet" href="dist/reveal.css">
+	<link rel="stylesheet" href="dist/theme/blood.css">
+
+	<!-- Theme used for syntax highlighted code -->
+	<link rel="stylesheet" href="plugin/highlight/monokai.css">
+</head>
+
+<body>
+	<div class="reveal">
+		<div class="slides">
+			<section>
+				<section>
+					<h1>Include What You Use</h1>
+
+
+					<h3><a href="https://cpp-aachen.github.io/">C++ User Gruppe Aachen</a><br>
+						2. April 2025</h3>
+
+
+				</section>
+				<section>
+					<h2>Goals</h2>
+					<small>
+						<ul>
+							<li>about "include what you use"</li>
+							<li>only a <strong>SMALL</strong> Introduction
+								<ul>
+									<li>what it does</li>
+									<li>why to use it (this tool)</li>
+									<li>how to use it</li>
+									<li>and some truth (it's not a commercial)</li>
+									<li><strong>NOT</strong> making you an expert</li>
+								</ul>
+							</li>
+							<li>slides as reference</li>
+						</ul>
+					</small>
+				</section>
+
+			</section>
+			<section>
+				<section>
+					<h2>The What</h2>
+
+					<ul>
+						<li>Linter for header includes (#include)</li>
+						<li class="fragment">based on clang (and therefore LLVM)</li>
+						<li class="fragment">exists already ~10 years
+							<ul>
+								<li>IWYU 0.4 = clang 3.6<br>clang release 25. Feb. 2015</li>
+								<li>IWYU 0.5 = clang 3.7<br>clang release 28. Aug. 2015</li>
+								<li>IWYU 0.23 = clang 19</li>
+							</ul>
+						</li>
+					</ul>
+					<small>
+						<p>
+							https://github.com/include-what-you-use/include-what-you-use/blob/master/README.md#clang-compatibility
+						</p>
+					</small>
+				</section>
+
+
+			</section>
+			<section>
+				<section>
+					<h2 data-id="code-title">example code</h2>
+					<pre data-id="code-animation"><code class="hljs cpp" data-trim data-line-numbers>
+						// includes cstdint on my system
+						// but also not used in code 
+						#include &lt;ratio&gt;
+						
+						int main() {
+							volatile uint8_t fake_out = 42;
+						}
+					</code></pre>
+					<p><small>main.cpp @ code/01</small></p>
+				</section>
+				<section>
+					<h2 data-id="code-title">IWYU output</h2>
+					<pre data-id="code-animation"><code class="hljs bash" data-trim>
+						Warning: include-what-you-use reported diagnostics:
+
+						/PATH/src/main.cpp should add these lines:
+						#include &lt;stdint.h&gt;  // for uint8_t
+						
+						/PATH/src/main.cpp should remove these lines:
+						- #include &lt;ratio&gt;  // lines 3-3
+						
+						The full include-list for /PATH/src/main.cpp:
+						#include &lt;stdint.h&gt;  // for uint8_t
+						---
+												
+					</code></pre>
+				</section>
+				<section>
+					<h2 data-id="code-title">CMake variable</h2>
+					<pre data-id="code-animation"><code class="hljs bash" data-trim>
+						&lt;LANG&gt;_INCLUDE_WHAT_YOU_USE						
+					</code></pre>
+					<p><small>src @ https://cmake.org/cmake/help/latest/prop_tgt/LANG_INCLUDE_WHAT_YOU_USE.html</small>
+					</p>
+				</section>
+				<section>
+					<h2 data-id="code-title">more CMake</h2>
+					<pre data-id="code-animation"><code class="hljs CMake" data-trim>
+						find_program(IWYU_PATH NAMES include-what-you-use iwyu)
+
+						if(IWYU_PATH)
+							set(CMAKE_CXX_INCLUDE_WHAT_YOU_USE 
+							${IWYU_PATH}
+							-Wno-unknown-warning-option    # ignore unknown options
+							-Xiwyu --max_line_length=120   # 120 chars wide
+							-Xiwyu --comment_style=long    # more details 
+							-Xiwyu --no_fwd_decls  			   # no forward declaration suggestions
+							)  
+						endif()	
+					</code></pre>
+					<p><small>@ code/01</small></p>
+				</section>
+				<section>
+					<h2 data-id="code-title">&lt;&gt; VS "" cpp</h2>
+					<pre data-id="code-animation"><code class="hljs cpp" data-trim>
+						#include &lt;cstdint&gt;
+
+						#include "inside_redir.hpp"
+						#include &lt;outside_redir.hpp&gt;
+						
+						int main() {
+							volatile uint8_t fake_out = 42;
+							Inside inside{};
+							Outside outside{};
+						}
+					</code></pre>
+					<p><small>@ code/02</small></p>
+				</section>
+				<section>
+					<h2 data-id="code-title">&lt;&gt; VS "" header</h2>
+					<pre data-id="code-animation"><code class="hljs cpp" data-trim>
+						// inside_redir.hpp
+						#include "inside.hpp"
+					</code></pre>
+					<pre data-id="code-animation"><code class="hljs cpp" data-trim>
+						// inside.hpp
+						struct Inside {	};
+					</code></pre>
+					<pre data-id="code-animation"><code class="hljs cpp" data-trim>
+						// outside_redir.hpp
+						#include "outside.hpp"
+					</code></pre>
+					<pre data-id="code-animation"><code class="hljs cpp" data-trim>
+						// outside.hpp
+						struct Outside {	};
+					</code></pre>
+					<p><small>@ code/02</small></p>
+				</section>
+				<section>
+					<h2 data-id="code-title">&lt;&gt; VS "" CMAKE</h2>
+					<pre data-id="code-animation"><code class="hljs cmake" data-trim>
+						target_include_directories(example        PUBLIC "inc_inside")
+						target_include_directories(example SYSTEM PUBLIC "inc_outside")	
+					</code></pre>
+				</section>
+				<section>
+					<h2 data-id="code-title">IWYU output</h2>
+					<pre data-id="code-animation"><code class="hljs bash" data-trim>
+						/PATH/src/main.cpp should add these lines:
+						#include &lt;outside.hpp&gt;  // for Outside
+						#include "inside.hpp"   // for Inside
+						
+						/PATH/src/main.cpp should remove these lines:
+						- #include &lt;outside_redir.hpp&gt;  // lines 4-4
+						- #include "inside_redir.hpp"  // lines 3-3
+						
+						The full include-list for /PATH/src/main.cpp:
+						#include &lt;cstdint&gt;      // for uint8_t
+						#include &lt;outside.hpp&gt;  // for Outside
+						#include "inside.hpp"   // for Inside					
+					</code></pre>
+				</section>
+			</section>
+			<section>
+				<section>
+					<h2 data-id="code-title">LINTER PRAGMAS</h2>
+					<pre data-id="code-animation"><code class="hljs cpp" data-trim>
+						// IWYU pragma: keep
+						
+						// IWYU pragma: begin_keep
+						// IWYU pragma: end_keep
+					</code></pre>
+
+					<pre data-id="code-animation"><code class="hljs cpp" data-trim>
+						// in own header!
+						// IWYU pragma: export
+					</code></pre>
+					<p><small>src @
+							https://github.com/include-what-you-use/include-what-you-use/blob/master/docs/IWYUPragmas.md</small>
+					</p>
+				</section>
+				<section>
+					<h2 data-id="code-title">IWYU output</h2>
+					<pre data-id="code-animation"><code class="hljs bash" data-trim>					
+					</code></pre>
+				</section>
+				<section>
+					<h2 data-id="code-title">list</h2>
+					<p><small>not complete!</small></p>
+					<pre data-id="code-animation"><code class="hljs cpp" data-trim>
+						IWYU pragma: keep
+						IWYU pragma: always_keep
+						IWYU pragma: export
+						IWYU pragma: no_include
+						IWYU pragma: no_forward_declare
+						IWYU pragma: private
+						IWYU pragma: private, include "public.h"
+						IWYU pragma: friend ".*favorites.*"
+					</code></pre>
+					<p><small>src
+							@https://github.com/include-what-you-use/include-what-you-use/blob/master/docs/IWYUPragmas.md#which-pragma-should-i-use
+						</small></p>
+				</section>
+				<section>
+					<h2 data-id="code-title">real use case</h2>
+					nice example of a library using it: CLI11
+					<p><small>https://github.com/CLIUtils/CLI11/blob/main/include/CLI/CLI.hpp
+						</small></p>
+				</section>
+			</section>
+			<section>
+				<section>
+					<h3>Doesn't</h3>
+					<h1>clang-tidy</h1>
+					<h3>have the same feature?</h3>
+				</section>
+				<section>
+					<h2 data-id="code-title">clang-tidy VS iwyu</h2>
+
+					<ul>
+						<li>clang-tidy has "misc-include-cleaner"</li>
+						<li class="fragment">since clang 17.0 (9 Sep. 2023) = ~2 years</li>
+						<li class="fragment">not many options</li>
+					</ul>
+					<small>
+						<p>
+							https://github.com/include-what-you-use/include-what-you-use/blob/master/README.md#clang-compatibility
+						</p>
+					</small>
+				</section>
+				<section data-background="clang-tidy.png"></section>
+			</section>
+			<section>
+				<section>
+					<h2>the killerfeature</h2>
+					<small>
+						<ul>
+							<li>You control your own files</li>
+							<li class="fragment">some libs use iwyu pragmas</li>
+							<li class="fragment">other libs not so much.....</li>
+							<li class="fragment">sometimes distros/versions make problems (internal header)</li>
+							<li class="fragment">and patching all headerfiles? nope!</li>
+						</ul>
+					</small>
+				</section>
+				<section>
+					<h1>MAPPING FILES</h1>
+				</section>
+				<section>
+					<h2 data-id="code-title">mapping file</h2>
+					<pre data-id="code-animation"><code class="hljs json" data-trim>
+						[
+						{
+						   "include":["&lt;outside.hpp&gt;", "private", "&lt;outside_redir.hpp&gt;", "public"]
+						},
+						{
+						   "include":["\"inside.hpp\"", "private", "\"inside_redir.hpp\"", "public"]
+						} 
+						]
+					</code></pre>
+					<p><small>@ code/04</small></p>
+				</section>
+				<section>
+					<h2 data-id="code-title">more CMake</h2>
+					<pre data-id="code-animation"><code class="hljs CMake" data-trim>
+						find_program(IWYU_PATH NAMES include-what-you-use iwyu)
+
+						if(IWYU_PATH)
+							set(CMAKE_CXX_INCLUDE_WHAT_YOU_USE 
+							${IWYU_PATH}
+							-Wno-unknown-warning-option    	# ignore unknown options
+							-Xiwyu --max_line_length=120   	# 120 chars wide
+							-Xiwyu --comment_style=long 		# more details 
+							-Xiwyu --no_fwd_decls						# no forward declaration suggestions
+							-Xiwyu --mapping_file=${PROJECT_SOURCE_DIR}/inoutmapping.imp # mapping file
+							)  
+						endif()
+					</code></pre>
+					<p><small>@ code/04</small></p>
+				</section>
+				<section>
+					<h1>Helpful for</h1>
+					<ul>
+						<li>
+							forwarding library header (like ThreadX &lt;tx_api.h&gt;)
+						</li>
+						<li>
+							wrong suggested system header (like &lt;bits/chrono&gt;)
+						</li>
+					</ul>
+				</section>
+				<section>
+					<h2 data-id="code-title">bash command</h2>
+					<pre data-id="code-animation"><code class="hljs bash" data-trim>
+						cd /usr/include/c++/14.2.1/ && \
+						grep -r headername | \
+						perl -nle 'm/^([^:]+).*@headername\{([^,]*)\}/ && \
+						print qq@  { "include": ["<$1>", "private", "<$2>", "public"] },@' | \
+						sort -u
+					</code></pre>
+					<p><small>modified based on
+							https://github.com/include-what-you-use/include-what-you-use/blob/b77194e3a3e1e4e5345bb5686e4bf7b23b9d2e0a/gcc.libc.imp</small>
+					</p>
+					<p><small>this cmd @ 04/mapping_script.sh</small>
+					</p>
+				</section>
+				<section data-background="mapping.png"></section>
+			</section>
+			<section>
+				<section>
+					<h2>New<br>artificial<br>Problems</h2>
+					<ul>
+						<li class="fragment">not allowed to add IWYU to CMakeLists.txt</li>
+						<li class="fragment">no parser for IWYU (bitbucket...)</li>
+					</ul>
+				</section>
+				<section>
+					<h2>compilation database</h2>
+					compile_commands.json (the file)<br>
+					CMAKE_EXPORT_COMPILE_COMMANDS (cmake var.)
+				</section>
+				<section>
+					<h2 data-id="code-title">iwyu_tool</h2>
+
+					<pre data-id="code-animation"><code class="hljs bash" data-trim>
+						iwyu_tool \
+						-p "PATH/TO/com_cmd.json" \
+						--output-format clang \
+						"PATH/TO/SOURCES -- \
+						-Xiwyu --max_line_length=120 \
+						-Xiwyu --comment_style=long \
+						-Xiwyu --no_fwd_decls \
+						-Xiwyu --mapping_file=mapping_file.imp
+						</code></pre>
+				</section>
+			</section>
+			<section>
+				<h2>But one thing <br>grind my gears</h2>
+				<strong>NEVER</strong> ever use same names as std header!<br>
+				no filesystem.hpp, filesystem.h etc because of &lt;filename&gt;<br>
+				I learned it the hard way ("associate names", a feature)<br>
+				same for "memory", "utility" etc.
+
+			</section>
+			<section>
+				<h1>END & QUESTIONS?</h1>
+				<ul>
+					<li>email: paul@targosz.dev</li>
+					<li>mastodon: https://mastodon.social/@sickeroni</li>
+					<li>https://www.linkedin.com/in/paul-targosz/</li>
+				</ul>
+			</section>
 		</div>
+	</div>
 
-		<script src="dist/reveal.js"></script>
-		<script src="plugin/notes/notes.js"></script>
-		<script src="plugin/markdown/markdown.js"></script>
-		<script src="plugin/highlight/highlight.js"></script>
-		<script>
-			// More info about initialization & config:
-			// - https://revealjs.com/initialization/
-			// - https://revealjs.com/config/
-			Reveal.initialize({
-				hash: true,
+	<script src="dist/reveal.js"></script>
+	<script src="plugin/notes/notes.js"></script>
+	<script src="plugin/markdown/markdown.js"></script>
+	<script src="plugin/highlight/highlight.js"></script>
+	<script>
+		// More info about initialization & config:
+		// - https://revealjs.com/initialization/
+		// - https://revealjs.com/config/
+		Reveal.initialize({
+			hash: true,
+			// show slide no
+			slideNumber: true,
+			// style changes
+			width: 1280,
+			height: 720,
+			margin: 0.01,
+			// Learn about plugins: https://revealjs.com/plugins/
+			plugins: [RevealMarkdown, RevealHighlight, RevealNotes]
+		});
+	</script>
+</body>
 
-				// Learn about plugins: https://revealjs.com/plugins/
-				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
-			});
-		</script>
-	</body>
 </html>
