@@ -65,7 +65,8 @@
 					</ul>
 					<small>
 						<p>
-							https://github.com/include-what-you-use/include-what-you-use/blob/master/README.md#clang-compatibility
+							<a
+								href="https://github.com/include-what-you-use/include-what-you-use/blob/master/README.md#clang-compatibility">https://github.com/include-what-you-use/include-what-you-use/blob/master/README.md#clang-compatibility</a>
 						</p>
 					</small>
 				</section>
@@ -84,7 +85,9 @@
 							volatile uint8_t fake_out = 42;
 						}
 					</code></pre>
-					<p><small>main.cpp @ code/01</small></p>
+					<p><small><a
+								href="https://github.com/Sickeroni/talk_ugaachen2025april_code/blob/main/01/src/main.cpp">main.cpp
+								@ code/01</a></small></p>
 				</section>
 				<section>
 					<h2 data-id="code-title">IWYU output</h2>
@@ -108,7 +111,8 @@
 					<pre data-id="code-animation"><code class="hljs bash" data-trim>
 						&lt;LANG&gt;_INCLUDE_WHAT_YOU_USE						
 					</code></pre>
-					<p><small>src @ https://cmake.org/cmake/help/latest/prop_tgt/LANG_INCLUDE_WHAT_YOU_USE.html</small>
+					<p><small>src @ <a
+								href="https://cmake.org/cmake/help/latest/prop_tgt/LANG_INCLUDE_WHAT_YOU_USE.html">https://cmake.org/cmake/help/latest/prop_tgt/LANG_INCLUDE_WHAT_YOU_USE.html</a></small>
 					</p>
 				</section>
 				<section>
@@ -126,7 +130,9 @@
 							)  
 						endif()	
 					</code></pre>
-					<p><small>@ code/01</small></p>
+					<p><small><a
+								href="https://github.com/Sickeroni/talk_ugaachen2025april_code/blob/main/01/CMakeLists.txt">CMakeLists.txt
+								@ code/01</a></small></p>
 				</section>
 				<section>
 					<h2 data-id="code-title">&lt;&gt; VS "" cpp</h2>
@@ -142,7 +148,9 @@
 							Outside outside{};
 						}
 					</code></pre>
-					<p><small>@ code/02</small></p>
+					<p><small><a
+								href="https://github.com/Sickeroni/talk_ugaachen2025april_code/blob/main/02/src/main.cpp">main.cpp
+								@ code/02</a></small></p>
 				</section>
 				<section>
 					<h2 data-id="code-title">&lt;&gt; VS "" header</h2>
@@ -162,7 +170,8 @@
 						// outside.hpp
 						struct Outside {	};
 					</code></pre>
-					<p><small>@ code/02</small></p>
+					<p><small><a href="https://github.com/Sickeroni/talk_ugaachen2025april_code/tree/main/02">*.hpp @
+								code/02</a></small></p>
 				</section>
 				<section>
 					<h2 data-id="code-title">&lt;&gt; VS "" CMAKE</h2>
@@ -170,6 +179,9 @@
 						target_include_directories(example        PUBLIC "inc_inside")
 						target_include_directories(example SYSTEM PUBLIC "inc_outside")	
 					</code></pre>
+					<p><small><a
+								href="https://github.com/Sickeroni/talk_ugaachen2025april_code/blob/main/02/CMakeLists.txt#L25">CMakeLists.txt
+								@ code/02</a></small></p>
 				</section>
 				<section>
 					<h2 data-id="code-title">IWYU output</h2>
@@ -204,13 +216,16 @@
 						// IWYU pragma: export
 					</code></pre>
 					<p><small>src @
-							https://github.com/include-what-you-use/include-what-you-use/blob/master/docs/IWYUPragmas.md</small>
+							<a
+								href="https://github.com/include-what-you-use/include-what-you-use/blob/master/docs/IWYUPragmas.md">https://github.com/include-what-you-use/include-what-you-use/blob/master/docs/IWYUPragmas.md</a></small>
 					</p>
 				</section>
 				<section>
 					<h2 data-id="code-title">IWYU output</h2>
 					<pre data-id="code-animation"><code class="hljs bash" data-trim>					
 					</code></pre>
+					<p><small><a href="https://github.com/Sickeroni/talk_ugaachen2025april_code/tree/main/03">code:
+								*.hpp @ code/03</a></small></p>
 				</section>
 				<section>
 					<h2 data-id="code-title">list</h2>
@@ -225,14 +240,15 @@
 						IWYU pragma: private, include "public.h"
 						IWYU pragma: friend ".*favorites.*"
 					</code></pre>
-					<p><small>src
-							@https://github.com/include-what-you-use/include-what-you-use/blob/master/docs/IWYUPragmas.md#which-pragma-should-i-use
+					<p><small>src @ <a
+								href="https://github.com/include-what-you-use/include-what-you-use/blob/master/docs/IWYUPragmas.md#which-pragma-should-i-use">github.com/include-what-you-use/[...]/docs/IWYUPragmas.md#which-pragma-should-i-use</a>
 						</small></p>
 				</section>
 				<section>
 					<h2 data-id="code-title">real use case</h2>
 					nice example of a library using it: CLI11
-					<p><small>https://github.com/CLIUtils/CLI11/blob/main/include/CLI/CLI.hpp
+					<p><small><a
+								href="https://github.com/CLIUtils/CLI11/blob/main/include/CLI/CLI.hpp">https://github.com/CLIUtils/CLI11/blob/main/include/CLI/CLI.hpp</a>
 						</small></p>
 				</section>
 			</section>
@@ -252,7 +268,8 @@
 					</ul>
 					<small>
 						<p>
-							https://github.com/include-what-you-use/include-what-you-use/blob/master/README.md#clang-compatibility
+							<a
+								href="https://github.com/include-what-you-use/include-what-you-use/blob/master/README.md#clang-compatibility">https://github.com/include-what-you-use/include-what-you-use/blob/master/README.md#clang-compatibility</a>
 						</p>
 					</small>
 				</section>
@@ -286,7 +303,9 @@
 						} 
 						]
 					</code></pre>
-					<p><small>@ code/04</small></p>
+					<p><small><a
+								href="https://github.com/Sickeroni/talk_ugaachen2025april_code/blob/main/04/inoutmapping.imp">inoutmapping.imp
+								@ code/04</a></small></p>
 				</section>
 				<section>
 					<h2 data-id="code-title">more CMake</h2>
@@ -304,7 +323,9 @@
 							)  
 						endif()
 					</code></pre>
-					<p><small>@ code/04</small></p>
+					<p><small><a
+								href="https://github.com/Sickeroni/talk_ugaachen2025april_code/blob/main/04/CMakeLists.txt#L20">CMakeLists.txt
+								@ code/04</a></small></p>
 				</section>
 				<section>
 					<h1>Helpful for</h1>
@@ -327,9 +348,12 @@
 						sort -u
 					</code></pre>
 					<p><small>modified based on
-							https://github.com/include-what-you-use/include-what-you-use/blob/b77194e3a3e1e4e5345bb5686e4bf7b23b9d2e0a/gcc.libc.imp</small>
+							<a
+								href="https://github.com/include-what-you-use/include-what-you-use/blob/b77194e3a3e1e4e5345bb5686e4bf7b23b9d2e0a/gcc.libc.imp">gcc.libc.imp</a></small>
 					</p>
-					<p><small>this cmd @ 04/mapping_script.sh</small>
+					<p><small><a
+								href="https://github.com/Sickeroni/talk_ugaachen2025april_code/blob/main/04/mapping_script.sh">this
+								cmd @ 04/mapping_script.sh</a></small>
 					</p>
 				</section>
 				<section data-background="mapping.png"></section>
@@ -373,9 +397,12 @@
 			<section>
 				<h1>END & QUESTIONS?</h1>
 				<ul>
-					<li>email: paul@targosz.dev</li>
-					<li>mastodon: https://mastodon.social/@sickeroni</li>
-					<li>https://www.linkedin.com/in/paul-targosz/</li>
+					<li>email: paul@targosz.dev &lt;- with v</li>
+					<li>mastodon: <a href="https://mastodon.social/@sickeroni">https://mastodon.social/@sickeroni</a>
+					</li>
+					<li>linkedin: <a
+							href="https://www.linkedin.com/in/paul-targosz/">https://www.linkedin.com/in/paul-targosz/</a>
+					</li>
 				</ul>
 			</section>
 		</div>
